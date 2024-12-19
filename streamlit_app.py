@@ -114,7 +114,7 @@ texas = [31.391533, -99.17065]
 houston = [29.7601, -95.3701]
 dallas = [32.7079, -96.9209]
 austin = [30.274722, -97.740556]
-san antonio = [29.424349, -98.491142]
+sanAntonio = [29.424349, -98.491142]
 zoom_level = 12
 midpoint = mpoint(data["lat"], data["lon"])
 
