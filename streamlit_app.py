@@ -109,10 +109,12 @@ with row1_2:
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
 row2_1, row2_2 = st.columns((2, 2))
 
-# SETTING THE ZOOM LOCATIONS FOR THE AIRPORTS
-texas = [31.9686, -99.9018]
+# SETTING GEOGRAPHIC CENTERS
+texas = [31.391533, -99.17065]
 houston = [29.7601, -95.3701]
-#newark = [40.7090, -74.1805]
+dallas = [32.7079, -96.9209]
+austin = [30.274722, -97.740556]
+san antonio = [29.424349, -98.491142]
 zoom_level = 12
 midpoint = mpoint(data["lat"], data["lon"])
 
