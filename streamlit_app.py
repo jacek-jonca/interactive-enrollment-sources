@@ -54,7 +54,7 @@ def render_map(data, lon, lat, zoom, title):
                     data=data,
                     get_position=["lon", "lat"],
                     radius=500,
-                    elevation_scale=50,
+                    elevation_scale=25,
                     elevation_range=[0, 2000],
                     auto_highlight=True,
                     pickable=True,
