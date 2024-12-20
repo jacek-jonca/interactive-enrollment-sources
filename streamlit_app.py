@@ -41,10 +41,12 @@ def render_map(data, lon, lat, zoom, title):
         pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v9",
             initial_view_state=pdk.ViewState(
-                longitude=lon,
-                latitude=lat,
-                zoom=zoom,
-                pitch=50,
+                longitude=-95.3701,
+                latitude=29.7601,
+                zoom=9,
+                max_zoom=16,
+                pitch=45,
+                bearing=0,
             ),
             layers=[
                 pdk.Layer(
