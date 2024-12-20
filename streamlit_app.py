@@ -99,10 +99,8 @@ midpoint = calculate_midpoint(data)
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
 row1_1, row1_2, row2_1, row2_2, row3_1, row3_2  = st.columns((2, 2, 2, 2, 2, 2))
 
-with row1_1:
+with st.container():
     render_map(data, midpoint[0], midpoint[1], 7, "Geographic Midpoint")
-
-with row1_2:
     render_map(data, -95.3701, 29.7601, 9, "Houston")
 
 with row2_1:
