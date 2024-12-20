@@ -97,17 +97,17 @@ locations = {
 midpoint = calculate_midpoint(data)
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
-row1_1  = st.columns(1)
+row1  = st.columns(8)
 
-with row1_1:
+with row1:
     render_map(data, midpoint[0], midpoint[1], 7, "Geographic Midpoint")
 
-row2_1  = st.columns(1)
+row2 = st.columns(8)
 
-with row2_1:
+with row2:
     render_map(data, -95.3701, 29.7601, 9, "Houston")
 
-row3_1, row3_2, row3_3, row3_4  = st.columns(4)
+row3_1, row3_2, row3_3, row3_4  = st.columns(2)
 
 with row3_1:
     render_map(data, -96.9209, 32.7079, 9, "Dallas")
