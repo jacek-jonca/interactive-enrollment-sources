@@ -96,27 +96,24 @@ locations = {
 # SETTING GEOGRAPHIC MIDPOINT
 midpoint = calculate_midpoint(data)
 
-# LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
-row1  = st.columns(8)
+# LAYING OUT THE STREAMLIT APP WITH SPECIFIC ROW ARRANGEMENT
+# Row 1: Full-width map for "All Texas"
+render_map(data, midpoint[0], midpoint[1], 7, "All Texas")
 
-with row1:
-    render_map(data, midpoint[0], midpoint[1], 7, "Geographic Midpoint")
+# Row 2: Full-width map for "Houston"
+render_map(data, locations["Houston"][0], locations["Houston"][1], 9, "Houston")
 
-row2 = st.columns(8)
+# Row 3: Four equal-width maps for "Dallas," "Austin,", "San Antonio", and "Killeen"
+row3_col1, row3_col2, row3_col3, row3_col4 = st.columns(4)
 
-with row2:
-    render_map(data, -95.3701, 29.7601, 9, "Houston")
+with row3_col1:
+    render_map(data, locations["Dallas"][0], locations["Dallas"][1], 9, "Dallas")
 
-row3_1, row3_2, row3_3, row3_4  = st.columns(2)
+with row3_col2:
+    render_map(data, locations["Austin"][0], locations["Austin"][1], 9, "Austin")
 
-with row3_1:
-    render_map(data, -96.9209, 32.7079, 9, "Dallas")
+with row3_col3:
+    render_map(data, locations["San Antonio"][0], locations["San Antonio"][1], 9, "San Antonio")
 
-with row3_2:
-    render_map(data, -97.7405, 30.2747, 9, "Austin")
-
-with row3_3:
-    render_map(data, -98.4911, 29.4243, 9, "San Antonio")
-
-with row3_4:
-    render_map(data, -97.7278, 31.1171, 9, "Killeen")
+with row3_col4:
+    render_map(data, locations["Killeen"][0], locations["Killeen"][1], 9, "Killeen")
