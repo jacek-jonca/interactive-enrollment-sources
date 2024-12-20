@@ -1,4 +1,4 @@
-"""An example of showing geographic enrollment data."""
+"""Displaying geospatial enrollment data."""
 
 import os
 import numpy as np
@@ -7,12 +7,12 @@ import pydeck as pdk
 import streamlit as st
 
 # SETTING PAGE CONFIG TO WIDE MODE AND ADDING A TITLE AND FAVICON
-st.set_page_config(layout="wide", page_title="Enrollment Sources", page_icon=":student:")
+st.set_page_config(layout="wide", page_title="Where do the applications come from?", page_icon=":student:")
 
 # LOAD DATA ONCE
 @st.cache_resource
 def load_data():
-    """Load and validate the enrollment data."""
+    """Load and validate the application data."""
     path = "data.csv"
     if not os.path.isfile(path):
         path = f"https://github.com/jacek-jonca/interactive-enrollment-sources/raw/main/{path}"
@@ -88,18 +88,31 @@ locations = {
     "All Texas": [-99.17065, 31.391533],
     "Houston": [-95.3701, 29.7601],
     "Dallas": [-96.9209, 32.7079],
-    "Austin": [-97.740556, 30.274722],
-    "San Antonio": [-98.491142, 29.424349],
+    "Austin": [-97.7405, 30.2747],
+    "San Antonio": [-98.4911, 29.4243],
+    "Killeen": [-97.7278, 31.1171],
 }
 
 # SETTING GEOGRAPHIC MIDPOINT
 midpoint = calculate_midpoint(data)
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
-row1, row2 = st.columns(2)
+row1_1, row1_2, row2_1, row2_2, row3_1, row3_2  = st.columns(2)
 
-with row1:
-    render_map(data, midpoint[0], midpoint[1], 7, "All Texas")
+with row1_1:
+    render_map(data, midpoint[0], midpoint[1], 7, "Geographic Midpoint")
 
-with row2:
+with row1_2:
     render_map(data, -95.3701, 29.7601, 9, "Houston")
+
+with row2_1:
+    render_map(data, -96.9209, 32.7079, 9, "Dallas")
+
+with row2_2:
+    render_map(data, -97.7405, 30.2747, 9, "Austin")
+
+with row3_1:
+    render_map(data, -98.4911, 29.4243, 9, "San Antonio")
+
+with row3_2:
+    render_map(data, -97.7278, 31.1171, 9, "Killeen")
