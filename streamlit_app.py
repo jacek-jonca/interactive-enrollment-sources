@@ -16,8 +16,6 @@
 """An example of showing geographic enrollment data."""
 
 import os
-
-import altair as alt
 import numpy as np
 import pandas as pd
 import pydeck as pdk
@@ -35,7 +33,7 @@ def load_data():
 
     data = pd.read_csv(
         path,
-        nrows=100000,  # there shouldn't be more than 100k records
+#        nrows=100000,  # there shouldn't be more than 100k records
         names=[
             "lat",
             "lon",
@@ -46,10 +44,9 @@ def load_data():
 #            "date/time"
 #        ],  # set as datetime instead of converting after the fact
     )
-
     return data
 
-# FUNCTION FOR AIRPORT MAPS
+# FUNCTION FOR MAPS
 def map(data, lat, lon, zoom):
     st.write(
         pdk.Deck(
@@ -81,13 +78,13 @@ def mpoint(lat, lon):
     return (np.average(lat), np.average(lon))
 
 # FILTER DATA BY HOUR
-@st.cache_data
-def histdata(df):
-    filtered = data[
-        (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
-    ]
-    hist = np.histogram(filtered["date/time"].dt.minute, bins=60, range=(0, 60))[0]
-    return pd.DataFrame({"minute": range(60), "pickups": hist})
+#@st.cache_data
+#def histdata(df):
+#    filtered = data[
+#        (df["date/time"].dt.hour >= hr) & (df["date/time"].dt.hour < (hr + 1))
+#    ]
+#    hist = np.histogram(filtered["date/time"].dt.minute, bins=60, range=(0, 60))[0]
+#    return pd.DataFrame({"minute": range(60), "pickups": hist})
 
 # STREAMLIT APP LAYOUT
 data = load_data()
@@ -115,37 +112,15 @@ houston = [29.7601, -95.3701]
 dallas = [32.7079, -96.9209]
 austin = [30.274722, -97.740556]
 sanAntonio = [29.424349, -98.491142]
-zoom_level = 12
+zoom_level = 9
 midpoint = mpoint(data["lat"], data["lon"])
 
 with row2_1:
     st.write(
-        f"""**All Texas"""
+        f"""**All Texas**"""
     )
     map(data, midpoint[0], midpoint[1], 11)
 
 with row2_2:
     st.write("**Houston**")
     map(data, houston[0], houston[1], zoom_level)
-
-# CALCULATING DATA FOR THE HISTOGRAM
-chart_data = histdata(data)
-
-# LAYING OUT THE HISTOGRAM SECTION
-st.write(
-    f"""**Breakdown of rides per minute between {hour_selected}:00 and {(hour_selected + 1) % 24}:00**"""
-)
-
-st.altair_chart(
-    alt.Chart(chart_data)
-    .mark_area(
-        interpolate="step-after",
-    )
-    .encode(
-        x=alt.X("minute:Q", scale=alt.Scale(nice=False)),
-        y=alt.Y("pickups:Q"),
-        tooltip=["minute", "pickups"],
-    )
-    .configure_mark(opacity=0.2, color="red"),
-    use_container_width=True,
-)
