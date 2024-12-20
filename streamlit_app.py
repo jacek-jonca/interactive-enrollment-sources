@@ -1,18 +1,3 @@
-# -*- coding: utf-8 -*-
-# Copyright 2018-2022 Streamlit Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 """An example of showing geographic enrollment data."""
 
 import os
@@ -27,38 +12,46 @@ st.set_page_config(layout="wide", page_title="Enrollment Sources", page_icon=":s
 # LOAD DATA ONCE
 @st.cache_resource
 def load_data():
+    """Load and validate the enrollment data."""
     path = "data.csv"
     if not os.path.isfile(path):
         path = f"https://github.com/jacek-jonca/interactive-enrollment-sources/raw/main/{path}"
 
-    data = pd.read_csv(
-        path,
-        names=[
-            "lon",
-            "lat",
-        ],  # specify names directly since they don't change
-        skiprows=1,  # don't read header since names specified directly
-        usecols=[0, 1],  # only two columns so tobe safe loading two
-    )
+    try:
+        data = pd.read_csv(
+            path,
+            names=["lon", "lat"],
+            skiprows=1,
+            usecols=[0, 1],
+        )
+        if data.empty:
+            st.error("Data file is empty. Please check the source.")
+            st.stop()
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        st.stop()
+
     return data
 
 # FUNCTION FOR MAPS
-def map(data, lon, lat, zoom):
-    st.write(
+def render_map(data, lon, lat, zoom, title):
+    """Render a map using PyDeck."""
+    st.write(f"**{title}**")
+    st.pydeck_chart(
         pdk.Deck(
             map_style="mapbox://styles/mapbox/light-v9",
-            initial_view_state={
-                "longitude": lon,
-                "latitude": lat,
-                "zoom": zoom,
-                "pitch": 50,
-            },
+            initial_view_state=pdk.ViewState(
+                longitude=lon,
+                latitude=lat,
+                zoom=zoom,
+                pitch=50,
+            ),
             layers=[
                 pdk.Layer(
-                    'HexagonLayer',
+                    "HexagonLayer",
                     data=data,
-                    get_position=['lon', 'lat'],
-                    radius=100,
+                    get_position=["lon", "lat"],
+                    radius=500,
                     elevation_scale=4,
                     elevation_range=[0, 1000],
                     auto_highlight=True,
@@ -72,44 +65,39 @@ def map(data, lon, lat, zoom):
 
 # CALCULATE MIDPOINT FOR GIVEN SET OF DATA
 @st.cache_data
-def mpoint(lon, lat):
-    return (np.average(lon), np.average(lat))
+def calculate_midpoint(data):
+    """Calculate the geographic midpoint."""
+    return (np.average(data["lon"]), np.average(data["lat"]))
 
 # STREAMLIT APP LAYOUT
 data = load_data()
 
+# Validate if data has enough records
+if data.shape[0] < 2:
+    st.error("Insufficient data for visualization. Please check the source file.")
+    st.stop()
+
 # LAYING OUT THE TOP SECTION OF THE APP
-row1_1, row1_2 = st.columns((3, 2))
+st.title("Enrollment Sources Data")
+st.markdown("## Visualizing enrollments")
 
-with row1_1:
-    st.title("Enrollment Sources Data")
+# DEFINE CITY LOCATIONS
+locations = {
+    "All Texas": [-99.17065, 31.391533],
+    "Houston": [-95.3701, 29.7601],
+    "Dallas": [-96.9209, 32.7079],
+    "Austin": [-97.740556, 30.274722],
+    "San Antonio": [-98.491142, 29.424349],
+}
 
-with row1_2:
-    st.write(
-        """
-    ##
-    Visualizing enrollments
-    """
-    )
+# SETTING GEOGRAPHIC MIDPOINT
+midpoint = calculate_midpoint(data)
 
 # LAYING OUT THE MIDDLE SECTION OF THE APP WITH THE MAPS
-row2_1, row2_2 = st.columns((2, 2))
+row1, row2 = st.columns(2)
 
-# SETTING GEOGRAPHIC CENTERS
-texas = [-99.17065, 31.391533]
-houston = [-95.3701, 29.7601]
-dallas = [-96.9209, 32.7079]
-austin = [-97.740556, 30.274722]
-sanAntonio = [-98.491142, 29.424349]
-zoom_level = 9
-midpoint = mpoint(data["lon"], data["lat"])
+with row1:
+    render_map(data, midpoint[0], midpoint[1], 7, "All Texas")
 
-with row2_1:
-    st.write(
-        f"""**All Texas**"""
-    )
-    map(data, midpoint[0], midpoint[1], 11)
-
-with row2_2:
-    st.write("**Houston**")
-    map(data, houston[0], houston[1], zoom_level)
+with row2:
+    render_map(data, -95.3701, 29.7601, 9, "Houston")
